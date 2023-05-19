@@ -104,7 +104,7 @@ const Search = () => {
     return (
         <SearchContainer>
             <NavItem>
-                <Title> Product </Title>
+                <Title> Products </Title>
             </NavItem>
             <NavItem>
                 <InputSearch

@@ -1,10 +1,9 @@
 import { FC } from "react";
-import NavigationBar from "./navigationBar";
 
 const DocumentPage: FC = () => {
     return (
         <div>
-            <NavigationBar />
+            <p>document</p>
         </div>
     );
 };

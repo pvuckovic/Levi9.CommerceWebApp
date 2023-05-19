@@ -43,8 +43,8 @@ export const SyncButton = styled.button`
 `;
 const NavigationBar = () => {
     const navigate = useNavigate();
-    const handleDocumentClick = () => {
-        navigate("/document");
+    const handleDocumentClick = (route:string) => {
+      navigate(route);
     };
     return (
         <Navbar>
@@ -52,8 +52,8 @@ const NavigationBar = () => {
                 <Logo />
             </NavItem>
             <NavItem>
-                <NavButton> Products </NavButton>
-                <NavButton onClick={handleDocumentClick}> Documents </NavButton>
+                <NavButton onClick={() => handleDocumentClick("/products")}> Products </NavButton>
+                <NavButton onClick={() => handleDocumentClick("/documents")}> Documents </NavButton>
                 <NavButton> My profile </NavButton>
                 <SyncButton>
                     <Sync />
