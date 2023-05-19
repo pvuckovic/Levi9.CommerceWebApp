@@ -1,12 +1,15 @@
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
-import NavigationBar from "./components/navigationBar";
+import DocumentPage from "./components/document";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <NavigationBar />
-      </header>
+      <Router>
+        <Routes>
+          <Route path="/document" element={<DocumentPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Logo from "../assets/icons/logo";
 import Sync from "../assets/icons/sync";
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = styled.div`
   width: 100%;
@@ -41,6 +42,10 @@ export const SyncButton = styled.button`
   }
 `;
 const NavigationBar = () => {
+    const navigate = useNavigate();
+    const handleDocumentClick = () => {
+        navigate("/document");
+    };
     return (
         <Navbar>
             <NavItem>
@@ -48,7 +53,7 @@ const NavigationBar = () => {
             </NavItem>
             <NavItem>
                 <NavButton> Products </NavButton>
-                <NavButton> Documents </NavButton>
+                <NavButton onClick={handleDocumentClick}> Documents </NavButton>
                 <NavButton> My profile </NavButton>
                 <SyncButton>
                     <Sync />
