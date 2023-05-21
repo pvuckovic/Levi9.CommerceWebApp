@@ -42,25 +42,25 @@ export const SyncButton = styled.button`
   }
 `;
 const NavigationBar = () => {
-    const navigate = useNavigate();
-    const handleDocumentClick = (route:string) => {
-      navigate(route);
-    };
-    return (
-        <Navbar>
-            <NavItem>
-                <Logo />
-            </NavItem>
-            <NavItem>
-                <NavButton onClick={() => handleDocumentClick("/products")}> Products </NavButton>
-                <NavButton onClick={() => handleDocumentClick("/documents")}> Documents </NavButton>
-                <NavButton> My profile </NavButton>
-                <SyncButton>
-                    <Sync />
-                </SyncButton>
-            </NavItem>
-        </Navbar>
-    );
+  const navigate = useNavigate();
+  const handleDocumentClick = (route: string) => {
+    navigate(route);
+  };
+  return (
+    <Navbar>
+      <NavItem>
+        <Logo />
+      </NavItem>
+      <NavItem>
+        <NavButton onClick={() => handleDocumentClick("/products")}> Products </NavButton>
+        <NavButton onClick={() => handleDocumentClick("/documents")}> Documents </NavButton>
+        <NavButton> My profile </NavButton>
+        <SyncButton>
+          <Sync />
+        </SyncButton>
+      </NavItem>
+    </Navbar>
+  );
 };
 
 export default NavigationBar;

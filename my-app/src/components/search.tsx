@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import DirectionAsc from "../assets/icons/directionAsc";
 import DirectionDesc from "../assets/icons/directionDesc";
+import { Route, useLocation } from "react-router";
 
 export const SearchContainer = styled.div`
 padding: 10px;
@@ -79,6 +80,7 @@ font-size: 45px;
   }
     `;
 const Search = () => {
+    const location = useLocation();
     const [value, setValue] = useState("");
     const [selectedOption, setSelectedOption] = useState("");
     const handleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -103,9 +105,13 @@ const Search = () => {
 
     return (
         <SearchContainer>
-            <NavItem>
-                <Title> Products </Title>
-            </NavItem>
+            {location.pathname === "/products" ?
+                (<NavItem>
+                    <Title> Products </Title>
+                </NavItem>)
+                : (<NavItem>
+                    <Title> Documents </Title>
+                </NavItem>)}
             <NavItem>
                 <InputSearch
                     type="text"

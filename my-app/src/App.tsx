@@ -1,18 +1,18 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import NavigationBar from "./components/navigationBar";
-import DocumentPage from "./components/document";
 import Product from "./components/product/products"
+import AddNewDocumentPage from "./components/document";
 
 function App() {
   return (
-    <div className="App">      
-      <Router> 
-      <NavigationBar /> 
+    <div className="App">
+      <Router>
+        <NavigationBar />
         <Routes>
-          <Route path="/" element={<Product/>} />
-          <Route path="/products" element={<Product/>} />
-          <Route path="/document" element={<DocumentPage/>} /> 
+          <Route path="/" element={<Product />} />
+          <Route path="/products" element={<Product />} />
+          <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
         </Routes>
       </Router>
     </div>
