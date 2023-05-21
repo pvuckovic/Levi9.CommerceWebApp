@@ -3,6 +3,8 @@ import axios from 'axios';
 import '../../assets/style/products.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
 import Search from '../search';
+import { useDispatch } from 'react-redux';
+import { addItem } from '../../store/slices/documentSlice';
 
 interface ProductInterface {
   id: number;
@@ -22,7 +24,7 @@ interface Price {
   lastUpdate: string;
 }
 
-interface ProductResponse {
+export interface ProductResponse {
   id: number;
   globalId: string;
   name: string;
@@ -69,44 +71,45 @@ const AddProductForm = () => {
   };
 
   return (
-      <Container>
-        <Row>
-          <Col>
-            <label className="products-text">Products</label>
-          </Col>
-          <Col>
-            <div className="form-container">
-              <form>
-                <div className="input-group">
-                  <input
-                    className="input-text"
-                    type="text"
-                    value={name}
-                    onChange={handleNameChange}
-                    placeholder="Add Product Name"
-                  />
-                </div>
-                <div className="input-group">
-                  <input
-                    className="input-text"
-                    type="text"
-                    value={imageUrl}
-                    onChange={handleImageUrlChange}
-                    placeholder="Image URL"
-                  />
-                </div>
-                <button className="add-product-button" onClick={handleAddProduct}>
-                  ADD PRODUCT
-                </button>
-              </form>
-            </div>
-          </Col>
-        </Row>
-      </Container>
+    <Container>
+      <Row>
+        <Col>
+          <label className="products-text">Products</label>
+        </Col>
+        <Col>
+          <div className="form-container">
+            <form>
+              <div className="input-group">
+                <input
+                  className="input-text"
+                  type="text"
+                  value={name}
+                  onChange={handleNameChange}
+                  placeholder="Add Product Name"
+                />
+              </div>
+              <div className="input-group">
+                <input
+                  className="input-text"
+                  type="text"
+                  value={imageUrl}
+                  onChange={handleImageUrlChange}
+                  placeholder="Image URL"
+                />
+              </div>
+              <button className="add-product-button" onClick={handleAddProduct}>
+                ADD PRODUCT
+              </button>
+            </form>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
 const Product = () => {
+  const dispatch = useDispatch();
   const [productList, setProductList] = useState<ProductInterface[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
@@ -153,7 +156,7 @@ const Product = () => {
     setCurrentPage(pageNumber);
   };
 
-  return (    
+  return (
     <Container>
       {totalPages > 1 && (
         <div className="pagination-container">
@@ -174,8 +177,11 @@ const Product = () => {
         {currentProducts.map((product) => (
           <Col key={product.id} lg={2} md={3} sm={5} xs={10}>
             <div className="product-item">
-              <img className="product-image" src={product.imageUrl} alt=''/>
+              <img className="product-image" src={product.imageUrl} alt='' />
               <h4>{product.name} [{product.availableQuantity}]</h4>
+              <button onClick={() => dispatch(addItem(product))}>
+                Add to Document
+              </button>
               <div>
                 <p>
                   [{product.id}]
@@ -194,7 +200,7 @@ const Product = () => {
             </div>
           </Col>
         ))}
-      </Row>      
+      </Row>
     </Container>
   );
 };
@@ -203,7 +209,7 @@ const App = () => {
   return (
     <div>
       <AddProductForm />
-      <Search/>
+      <Search />
       <Product />
     </div>
   );
