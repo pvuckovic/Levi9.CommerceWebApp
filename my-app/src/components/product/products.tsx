@@ -33,86 +33,11 @@ export interface ProductResponse {
   lastUpdate: string;
   priceList: Price[];
 }
-
-const AddProductForm = () => {
-  const [name, setName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [productList, setProductList] = useState<ProductInterface[]>([]);
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
-  const handleImageUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(event.target.value);
-  };
-
-  const handleAddProduct = async () => {
-    const product: ProductInterface = {
-      id: Date.now(),
-      globalId: '',
-      name: name,
-      imageUrl: imageUrl,
-      availableQuantity: 0,
-      lastUpdate: '',
-      priceList: [],
-      selectedPrice: null,
-    };
-
-    try {
-      const response = await axios.post<ProductResponse>('http://localhost:5091/v1/Product', product);
-      const newProduct = response.data;
-      setProductList((prevProductList) => [...prevProductList, { ...newProduct, selectedPrice: null }]);
-      setName('');
-      setImageUrl('');
-    } catch (error) {
-      console.log('Error adding product:', error);
-    }
-  };
-
-  return (
-    <Container>
-      <Row>
-        <Col>
-          <label className="products-text">Products</label>
-        </Col>
-        <Col>
-          <div className="form-container">
-            <form>
-              <div className="input-group">
-                <input
-                  className="input-text"
-                  type="text"
-                  value={name}
-                  onChange={handleNameChange}
-                  placeholder="Add Product Name"
-                />
-              </div>
-              <div className="input-group">
-                <input
-                  className="input-text"
-                  type="text"
-                  value={imageUrl}
-                  onChange={handleImageUrlChange}
-                  placeholder="Image URL"
-                />
-              </div>
-              <button className="add-product-button" onClick={handleAddProduct}>
-                ADD PRODUCT
-              </button>
-            </form>
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  );
-};
-
 const Product = () => {
   const dispatch = useDispatch();
   const [productList, setProductList] = useState<ProductInterface[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 20;
+  const productsPerPage = 10;
 
   useEffect(() => {
     fetchProductList();
@@ -139,6 +64,7 @@ const Product = () => {
           const selectedPrice = product.priceList.find((price) => price.id === priceId);
           return {
             ...product,
+            imageUrl: product.imageUrl.replace(/\\/g, '/'),
             selectedPrice: selectedPrice || null,
           };
         }
@@ -178,10 +104,7 @@ const Product = () => {
           <Col key={product.id} lg={2} md={3} sm={5} xs={10}>
             <div className="product-item">
               <img className="product-image" src={product.imageUrl} alt='' />
-              <h4>{product.name} [{product.availableQuantity}]</h4>
-              <button onClick={() => dispatch(addItem(product))}>
-                Add to Document
-              </button>
+              <h4>{product.name} [{product.availableQuantity}]</h4>              
               <div>
                 <p>
                   [{product.id}]
@@ -196,6 +119,10 @@ const Product = () => {
                     ))}
                   </select>
                 </p>
+
+                <button onClick={() => dispatch(addItem(product))}>
+                Add to Document
+                </button>
               </div>
             </div>
           </Col>
@@ -208,7 +135,6 @@ const Product = () => {
 const App = () => {
   return (
     <div>
-      <AddProductForm />
       <Search />
       <Product />
     </div>
