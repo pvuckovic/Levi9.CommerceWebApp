@@ -2,7 +2,8 @@ import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import DirectionAsc from "../assets/icons/directionAsc";
 import DirectionDesc from "../assets/icons/directionDesc";
-import { Route, useLocation } from "react-router";
+import { useLocation } from "react-router";
+import AddProductForm from "./product/addproducts";
 
 export const SearchContainer = styled.div`
 padding: 10px;
@@ -23,8 +24,9 @@ export const SearchButton = styled.button`
 box-sizing: border-box;
 width: 80px;
 height: 30px;
-background: #FFFFFF;
-border: 1px solid #C2C2C2;
+color: #FFFFFF;
+background: #003DF2;
+border-color: #003DF2;
 border-radius: 20px;
     cursor: pointer;
     font-size: 10px;
@@ -47,7 +49,7 @@ border: none;
 export const InputSearch = styled.input`
 margin-right: 20px;
 box-sizing: border-box;
-
+text-align: center;
 height: 30px;
 background: #FFFFFF;
 border: 1px solid #C2C2C2;
@@ -62,6 +64,7 @@ box-sizing: border-box;
 width: 100px;
 height: 30px;
 background: #FFFFFF;
+text-align: center;
 border: 1px solid #C2C2C2;
 border-radius: 20px;
     `;
@@ -71,6 +74,7 @@ margin-left: 10px;
 position: absolute;
 font-weight: 600;
 font-size: 45px;
+text-align: center;
 @media (max-width: 480px) {
     font-size: 30px;
     position: relative;
@@ -128,6 +132,7 @@ const Search = () => {
                 <DirectionButtonAsc onClick={handleSearch}> <DirectionAsc /> </DirectionButtonAsc>
                 <DirectionButtonDesc> <DirectionDesc /></DirectionButtonDesc>
                 <SearchButton onClick={handleSearch}> Search</SearchButton>
+                {location.pathname === "/products" && <AddProductForm />}     
             </NavItem>
         </SearchContainer>
     );
