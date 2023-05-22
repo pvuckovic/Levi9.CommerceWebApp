@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import './login.css';
+import { useNavigate } from 'react-router-dom';
  
 interface AuthenticationRequest {
   Email: string;
@@ -16,6 +17,7 @@ const LoginClient: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [token, setToken] = useState('');
   const [idClient, setClientId] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -29,14 +31,14 @@ const LoginClient: React.FC = () => {
       
       setToken(response.data.token)
       setClientId(response.data.idClient)
-
-
       
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('userId', idClient);
       console.log(response.data.token);
       console.log(response.data.idClient);
       // Save the token or perform any necessary actions
+
+      navigate('/products');
     } catch (error : any) {
       setError(error.response.data);
     }

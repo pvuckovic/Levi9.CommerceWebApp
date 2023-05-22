@@ -63,12 +63,12 @@ const Product = () => {
 
   const fetchProductList = async () => {
     try {
-      const token = sessionStorage.getItem('token');
-      console.log('s');
-      console.log(token);
+       const token = sessionStorage.getItem('token');
+      // console.log('s');
+       console.log(token);
 
-      const response = await axios.get<ProductResponse[]>('https://localhost:7281/v1/Product/All');
-      const products = response.data.map((product) => ({
+       const response = await api.get<ProductResponse[]>('https://localhost:7281/v1/Product/All');     
+        const products = response.data.map((product) => ({
         ...product,
         selectedPrice: null,
       }));
