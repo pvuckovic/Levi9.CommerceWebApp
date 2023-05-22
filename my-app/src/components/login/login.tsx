@@ -14,6 +14,8 @@ const LoginClient: React.FC = () => {
   });
 
   const [error, setError] = useState<string>('');
+  const [token, setToken] = useState('');
+  const [idClient, setClientId] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -23,10 +25,17 @@ const LoginClient: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://localhost:5091/v1/Authentication/', credentials);
-      const token = response.data;
+      const response = await axios.post('https://localhost:7281/v1/Authentication/', credentials);
+      
+      setToken(response.data.token)
+      setClientId(response.data.idClient)
+
+
+      
       sessionStorage.setItem('token', token);
-      console.log(token);
+      sessionStorage.setItem('userId', idClient);
+      console.log(response.data.token);
+      console.log(response.data.idClient);
       // Save the token or perform any necessary actions
     } catch (error : any) {
       setError(error.response.data);

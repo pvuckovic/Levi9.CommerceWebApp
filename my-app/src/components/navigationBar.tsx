@@ -54,7 +54,7 @@ const NavigationBar = () => {
       <NavItem>
         <NavButton onClick={() => handleDocumentClick("/products")}> Products </NavButton>
         <NavButton onClick={() => handleDocumentClick("/documents")}> Documents </NavButton>
-        <NavButton> My profile </NavButton>
+        <NavButton onClick={() => handleDocumentClick("/login/login")}> My profile </NavButton>
         <SyncButton>
           <Sync />
         </SyncButton>
