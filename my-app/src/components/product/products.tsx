@@ -6,6 +6,24 @@ import Search from '../search';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../../store/slices/documentSlice';
 
+const api = axios.create();
+
+// Add the interceptor
+api.interceptors.request.use(
+  (config) => {
+    // Get stored token from localStorage
+    const token = sessionStorage.getItem('token');
+    
+    // Add token to the header
+    config.headers.Authorization = `Bearer ${token}`;
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 interface ProductInterface {
   id: number;
   globalId: string;
@@ -45,7 +63,11 @@ const Product = () => {
 
   const fetchProductList = async () => {
     try {
-      const response = await axios.get<ProductResponse[]>('http://localhost:5091/v1/Product/All');
+      const token = sessionStorage.getItem('token');
+      console.log('s');
+      console.log(token);
+
+      const response = await axios.get<ProductResponse[]>('https://localhost:7281/v1/Product/All');
       const products = response.data.map((product) => ({
         ...product,
         selectedPrice: null,

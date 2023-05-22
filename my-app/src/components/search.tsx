@@ -4,6 +4,7 @@ import DirectionAsc from "../assets/icons/directionAsc";
 import DirectionDesc from "../assets/icons/directionDesc";
 import { useLocation } from "react-router";
 import AddProductForm from "./product/addproducts";
+import axios from 'axios';
 
 export const SearchContainer = styled.div`
 padding: 10px;
@@ -83,6 +84,24 @@ text-align: center;
     margin-bottom: 10px;
   }
     `;
+    const api = axios.create();
+
+    // Add the interceptor
+    api.interceptors.request.use(
+      (config) => {
+        // Get stored token from localStorage
+        const token = localStorage.getItem('token');
+        
+        // Add token to the header
+        config.headers.Authorization = `Bearer ${token}`;
+    
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
 const Search = () => {
     const location = useLocation();
     const [value, setValue] = useState("");
