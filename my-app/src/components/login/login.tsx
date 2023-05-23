@@ -28,9 +28,12 @@ const LoginClient: React.FC = () => {
 
     try {
       const response = await axios.post('https://localhost:7281/v1/Authentication/', credentials);
+
+      const token = response.data.token; //ove dve linije
+      const idClient = response.data.idClient;
       
-      setToken(response.data.token)
-      setClientId(response.data.idClient)
+      setToken(token)
+      setClientId(idClient)
       
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('userId', idClient);
