@@ -5,6 +5,7 @@ import Product from "./components/product/products"
 import AddNewDocumentPage from "./components/document";
 import LoginClient from "./components/login/login";
 import Profile from "./components/profile/profile";
+import DocumentList from "./components/docs/documents";
 
 
 function App() {
@@ -16,6 +17,8 @@ function App() {
           <Route path="/" element={<Product />} />
           <Route path="/products" element={<Product />} />
           <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
+          <Route path="/docs/documents" element={<DocumentList/>} />
+
           <Route path="/login/login" element={<LoginClient/>} />
         </Routes>
       </Router>
