@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Logo from "../assets/icons/logo";
 import Sync from "../assets/icons/sync";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Navbar = styled.div`
   width: 100%;
@@ -49,7 +49,9 @@ const NavigationBar = () => {
   return (
     <Navbar>
       <NavItem>
-        <Logo />
+        <Link to="/products">
+          <Logo />
+        </Link>
       </NavItem>
       <NavItem>
         <NavButton onClick={() => handleDocumentClick("/products")}> Products </NavButton>

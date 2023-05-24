@@ -35,8 +35,13 @@ const AddProductButton = styled.button`
   background: #003DF2;
   border-color: #003DF2;
 `;
+interface AddProductFormProps {
+  fetchProductList: () => void;
+}
 
-const AddProductForm = () => {
+const AddProductForm: React.FC<AddProductFormProps> = ({
+  fetchProductList,
+}) => {
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
@@ -62,9 +67,9 @@ const AddProductForm = () => {
 
     try {
       const response = await axios.post('http://localhost:5091/v1/Product', product);
-      
       setName('');
       setImageUrl('');
+      await fetchProductList();
     } catch (error) {
       console.log('Error adding product:', error);
     }
