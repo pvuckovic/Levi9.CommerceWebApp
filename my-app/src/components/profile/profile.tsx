@@ -2,6 +2,24 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './profile.css';
 
+const api = axios.create();
+
+// Add the interceptor
+api.interceptors.request.use(
+  (config) => {
+    // Get stored token from localStorage
+    const token = sessionStorage.getItem('token');
+    
+    // Add token to the header
+    config.headers.Authorization = `Bearer ${token}`;
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 interface Client {
   id: number;
   name: string;
@@ -21,7 +39,7 @@ const Profile: React.FC<ClientProfileProps> = ({ clientId }) => {
   useEffect(() => {
     const fetchClientProfile = async () => {
       try {
-        const response = await axios.get<Client>(`http://localhost:5091/v1/client/${clientId}`);
+        const response = await api.get<Client>(`https://localhost:7281/v1/client/${clientId}`);
         setClient(response.data);
         console.log(response.data);
         setLoading(false);
@@ -38,9 +56,9 @@ const Profile: React.FC<ClientProfileProps> = ({ clientId }) => {
   }
 
   return (
-    <div className='container'>
-    <div className="card">
-  <h1>Client Profile</h1>
+    <div className='profile-container'>
+    <div className="profile-card">
+  <h1 className='profile-h1'>Client Profile</h1>
   <div className="client-info">
     <span>Name:</span>
     <p>{client?.name}</p>

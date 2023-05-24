@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import './register.css';
+import { useNavigate } from 'react-router-dom';
 
 interface Client {
   Name: string;
@@ -29,13 +30,15 @@ const RegisterClient: React.FC = () => {
   const [priceLists, setPriceLists] = useState<PriceList[]>([]);
   const [message, setMessage] = useState<string>('');
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchPriceLists();
   }, []);
 
   const fetchPriceLists = async () => {
     try {
-      const response = await axios.get('https://localhost:5091/v1/pricelist/');
+      const response = await axios.get('https://localhost:7281/v1/pricelist/');
       const data = response.data;
 
       if (Array.isArray(data) && data.length > 0) {
@@ -65,18 +68,21 @@ const RegisterClient: React.FC = () => {
       const response = await axios.post('https://localhost:7281/v1/Client/', client);
       console.log(response);
       setMessage('Client created successfully');
+
+      navigate('/');
+      
     } catch (error: any) {
       setMessage(error.response.data);
     }
   };
 
   return (
-    <div className="container">
-        <div className="card">
+    <div className="register-container">
+        <div className="register-card">
             <h2 className='register-header'>Create client</h2>
-  <form className="form" onSubmit={handleSubmit}>
+  <form className="register-form" onSubmit={handleSubmit}>
     <input
-      className="input"
+      className="register-input"
       type="text"
       name="Name"
       placeholder="Name"
@@ -85,7 +91,7 @@ const RegisterClient: React.FC = () => {
       required
     />
     <input
-      className="input"
+      className="register-input"
       type="text"
       name="Address"
       placeholder="Address"
@@ -94,7 +100,7 @@ const RegisterClient: React.FC = () => {
       required
     />
     <input
-      className="input"
+      className="register-input"
       type="email"
       name="Email"
       placeholder="Email"
@@ -103,7 +109,7 @@ const RegisterClient: React.FC = () => {
       required
     />
     <input
-      className="input"
+      className="register-input"
       type="password"
       name="Password"
       placeholder="Password"
@@ -112,7 +118,7 @@ const RegisterClient: React.FC = () => {
       required
     />
     <input
-      className="input"
+      className="register-input"
       type="text"
       name="Phone"
       placeholder="Phone"
@@ -122,7 +128,7 @@ const RegisterClient: React.FC = () => {
       pattern="\d{10}"
     />
     <select
-      className="select"
+      className="register-select"
       name="PriceListId"
       value={client.PriceListId}
       onChange={handleChange}
@@ -135,7 +141,7 @@ const RegisterClient: React.FC = () => {
         </option>
       ))}
     </select>
-    <button className="button" type="submit">Create Client</button>
+    <button className="register-button" type="submit">Create Client</button>
   </form>
   {message && <p className="message">{message}</p>}
   </div>
