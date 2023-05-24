@@ -47,8 +47,11 @@ const documentSlice = createSlice({
         setDocumentType: (state, action: PayloadAction<string>) => {
             state.documentType = action.payload;
         },
+        clearDocument: (state) => {
+            state.items = [];
+        },
     },
 });
 
-export const { addItem, setDocumentType } = documentSlice.actions;
+export const { addItem, setDocumentType, clearDocument } = documentSlice.actions;
 export default documentSlice.reducer;
