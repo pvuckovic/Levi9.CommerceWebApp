@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Search from './search';
 import Product, { PriceList, ProductInterface, ProductResponse } from './product/products';
 import axios from 'axios';
@@ -6,10 +6,8 @@ import AddUpdatePriceListForm from './product/addupdatepricelist';
 
 const ProductPage = () => {
     const [productList, setProductList] = useState<ProductInterface[]>([]);
-    const [priceLists, setPriceLists] = useState<PriceList[]>([]);
-    const [totalPages, setTotalPages] = useState(5);
-    const [currentPage, setCurrentPage] = useState(1);
-
+    const [priceLists, setPriceLists] = useState<PriceList[]>([]);    
+    const [allProductsSearch, setAllProductsSearch]= useState<ProductInterface[]>([]);
     useEffect(() => {
         fetchProductList();
     }, []);
@@ -23,25 +21,37 @@ const ProductPage = () => {
                 selectedPrice: null,
             }));
             setProductList(products);
+            setAllProductsSearch(products);
             const priceListResponse = await axios.get<PriceList[]>('http://localhost:5091/v1/Pricelist');
             const priceLists = priceListResponse.data.map((priceList) => ({
                 ...priceList,
                 products: products.filter((product) => product.priceList.some((price) => price.id === priceList.id)),
             }));
             setPriceLists(priceLists);
-        } catch (error) {
-            console.log('Error fetching product list:', error);
-        }
+        } catch (error:any) {
+            if(error.response){
+              const status = error.response.status;
+              const data = error.response.data;
+              const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
+          
+              console.log('Request failed with status:', status);
+              console.log('Error data:', data);
+             
+              window.alert(errorMessage);
+            }else{
+              const errorMessage = `Error executing request: ${error.message}`;
+      
+              window.alert(errorMessage);
+            }      
+          }
     };
     return (
         <div>
             <Search
                 setProductList={setProductList}
-                setTotalPages={setTotalPages}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalPages={totalPages}
                 fetchProductList={fetchProductList}
+                productList={productList}
+                allProductsSearch={allProductsSearch}
             />
             <AddUpdatePriceListForm
                 productList={productList}
@@ -49,7 +59,7 @@ const ProductPage = () => {
                 fetchProductList={fetchProductList}
                 priceLists={priceLists}
             />
-            <Product productList={productList} totalPages={totalPages} setCurrentPage={setCurrentPage} currentPage={1} setProductList={setProductList} />
+            <Product productList={productList} setProductList={setProductList} />
         </div>
     );
 };

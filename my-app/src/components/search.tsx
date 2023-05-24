@@ -5,6 +5,7 @@ import DirectionDesc from "../assets/icons/directionDesc";
 import { useLocation } from "react-router";
 import AddProductForm from "./product/addproducts";
 import { ProductInterface } from "./product/products";
+import axios from "axios";
 
 export const SearchContainer = styled.div`
 padding: 10px;
@@ -102,22 +103,18 @@ const PageNumber = styled.button<{ active: boolean }>`
 `;
 interface SearchProps {
     setProductList: React.Dispatch<React.SetStateAction<ProductInterface[]>>;
-    setTotalPages: React.Dispatch<React.SetStateAction<number>>;
-    setCurrentPage: (pageNumber: number) => void;
-    currentPage: number;
-    totalPages: number;
+    productList: ProductInterface[],
     fetchProductList: () => void;
+    allProductsSearch: ProductInterface[],
 }
-const Search: React.FC<SearchProps> = ({ setProductList, setTotalPages, currentPage, totalPages, setCurrentPage, fetchProductList }) => {
+const Search: React.FC<SearchProps> = ({ setProductList,  fetchProductList, productList,allProductsSearch}) => {
     const location = useLocation();
     const [value, setValue] = useState("");
     const [selectedOption, setSelectedOption] = useState("name");
     const [direction, setDirection] = useState<'asc' | 'dsc'>('asc');
-
-
-    const handlePageClick = (pageNumber: number) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const handlePageClick = (pageNumber: number) => {        
         setCurrentPage(pageNumber);
-        handleSearch('asc', pageNumber);
     };
 
     const handleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -130,42 +127,59 @@ const Search: React.FC<SearchProps> = ({ setProductList, setTotalPages, currentP
 
     const handleSearchAsc = () => {
         setDirection('asc');
-        handleSearch('asc', currentPage);
     };
     const handleSearchDesc = () => {
         setDirection('dsc');
-        handleSearch('dsc', currentPage);
     };
 
     const handleSearchButtonClick = () => {
         handleSearch(direction, currentPage);
     };
     const handleSearch = (direction: string, page: number) => {
+        if (!value) {
+            const errorMessage = 'Please enter a name.';
+            window.alert(errorMessage);
+            return;
+          }
+        
         const apiUrl = `http://localhost:5091/v1/Product/Search?page=${page}&name=${value}&orderBy=${selectedOption}&direction=${direction}`;
-        fetch(apiUrl)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                setProductList(data.items);
+        axios.get(apiUrl)
+            .then(async (response) => {
+                setProductList(response.data.items);
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error:any) => {
+                if(error.response){
+                        const status = error.response.status;
+                        const data = error.response.data;
+                        const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
+                    
+                        console.log('Request failed with status:', status);
+                        console.log('Error data:', data);
+                    
+                        window.alert(errorMessage);
+                    }else{
+                        const errorMessage = `Error executing request: ${error.message}`;
+
+                        window.alert(errorMessage);
+                    }      
             });
     };
+    const constTotalPages = Math.ceil(allProductsSearch.length / 10);
+
     const renderPageNumbers = () => {
-        const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(
-                <PageNumber
-                    key={i}
-                    active={i === currentPage}
-                    onClick={() => handlePageClick(i)}
-                >
-                    {i}
-                </PageNumber>
-            );
-        }
-        return pageNumbers;
+    const pageNumbers = [];
+    for (let i = 1; i <= constTotalPages; i++) {
+        pageNumbers.push(
+        <PageNumber
+            key={i}
+            active={i === currentPage}
+            onClick={() => handlePageClick(i)}
+        >
+            {i}
+        </PageNumber>
+        );
+    }
+    return pageNumbers;
     };
     return (
         <SearchContainer>

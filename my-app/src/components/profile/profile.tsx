@@ -25,8 +25,21 @@ const Profile: React.FC<ClientProfileProps> = ({ clientId }) => {
         setClient(response.data);
         console.log(response.data);
         setLoading(false);
-      } catch (error) {
-        console.error(error);
+      } catch (error:any) {
+        if(error.response){
+          const status = error.response.status;
+          const data = error.response.data;
+          const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
+      
+          console.log('Request failed with status:', status);
+          console.log('Error data:', data);
+         
+          window.alert(errorMessage);
+        }else{
+          const errorMessage = `Error executing request: ${error.message}`;
+  
+          window.alert(errorMessage);
+        }      
       }
     };
 

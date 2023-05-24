@@ -1,7 +1,6 @@
 import { ChangeEvent, FC, useState } from "react";
 import styled from "styled-components";
-import NavigationBar from "./navigationBar";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from "../store/store";
 import { DocumentState } from "../store/slices/documentSlice";
 import { Col, Row } from "react-bootstrap";
@@ -52,7 +51,6 @@ cursor: pointer;
 
 `;
 const AddNewDocumentPage: FC<DocumentState> = () => {
-    const dispatch = useDispatch();
     const selectedItems = useSelector((state: RootState) => state.document.items);
     const { items } = useSelector((state: RootState) => state.document);
     const [documentType, setDocumenType] = useState('INVOICE');
@@ -74,8 +72,21 @@ const AddNewDocumentPage: FC<DocumentState> = () => {
             .then((data) => {
                 console.log(data);
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error:any) => {
+                if(error.response){
+                    const status = error.response.status;
+                    const data = error.response.data;
+                    const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
+                
+                    console.log('Request failed with status:', status);
+                    console.log('Error data:', data);
+                   
+                    window.alert(errorMessage);
+                  }else{
+                    const errorMessage = `Error executing request: ${error.message}`;
+            
+                    window.alert(errorMessage);
+                  }   
             });
     };
     return (
