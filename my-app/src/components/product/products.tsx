@@ -5,8 +5,9 @@ import { Container, Row, Col, Pagination } from 'react-bootstrap';
 import Search from '../search';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../../store/slices/documentSlice';
+import AddUpdatePriceListForm from './addupdatepricelist';
 
-interface ProductInterface {
+export interface ProductInterface {
   id: number;
   globalId: string;
   name: string;
@@ -17,7 +18,15 @@ interface ProductInterface {
   selectedPrice: Price | null;
 }
 
-interface Price {
+export interface PriceList {
+  id: number;
+  globalId: string;
+  name: string;
+  lastUpdate: string;
+  products: ProductInterface[];
+}
+
+export interface Price {
   id: number;
   priceValue: number;
   currency: string;
@@ -33,28 +42,24 @@ export interface ProductResponse {
   lastUpdate: string;
   priceList: Price[];
 }
-const Product = () => {
+
+export interface PriceRequest {
+  priceListId: number;
+  productId: number;
+  price: number;
+  currency: string;
+}
+
+const Product = ({
+  productList,
+  setProductList
+}: {
+  productList: ProductInterface[];
+  setProductList: React.Dispatch<React.SetStateAction<ProductInterface[]>>;
+}) => {
   const dispatch = useDispatch();
-  const [productList, setProductList] = useState<ProductInterface[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
-
-  useEffect(() => {
-    fetchProductList();
-  }, []);
-
-  const fetchProductList = async () => {
-    try {
-      const response = await axios.get<ProductResponse[]>('http://localhost:5091/v1/Product/All');
-      const products = response.data.map((product) => ({
-        ...product,
-        selectedPrice: null,
-      }));
-      setProductList(products);
-    } catch (error) {
-      console.log('Error fetching product list:', error);
-    }
-  };
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>, productId: number) => {
     const priceId = parseInt(event.target.value);
@@ -65,7 +70,7 @@ const Product = () => {
           return {
             ...product,
             imageUrl: product.imageUrl.replace(/\\/g, '/'),
-            selectedPrice: selectedPrice || null,
+            selectedPrice: selectedPrice || null
           };
         }
         return product;
@@ -84,27 +89,32 @@ const Product = () => {
 
   return (
     <Container>
-      {totalPages > 1 && (
-        <div className="pagination-container">
-          <Pagination>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <Pagination.Item
-                key={index + 1}
-                active={index + 1 === currentPage}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
-          </Pagination>
-        </div>
-      )}
+      <Row>
+        {totalPages > 1 && (
+          <div className="pagination-container">
+            <Pagination>
+              {Array.from({ length: totalPages }, (_, index) => (
+                <Pagination.Item
+                  key={index + 1}
+                  active={index + 1 === currentPage}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          </div>
+        )}
+      </Row>
+
       <Row className="product-container">
         {currentProducts.map((product) => (
           <Col key={product.id} lg={2} md={3} sm={5} xs={10}>
             <div className="product-item">
-              <img className="product-image" src={product.imageUrl} alt='' />
-              <h4>{product.name} [{product.availableQuantity}]</h4>              
+              <img className="product-image" src={product.imageUrl} alt="" />
+              <h4>
+                {product.name} [{product.availableQuantity}]
+              </h4>
               <div>
                 <p>
                   [{product.id}]
@@ -119,10 +129,7 @@ const Product = () => {
                     ))}
                   </select>
                 </p>
-
-                <button onClick={() => dispatch(addItem(product))}>
-                Add to Document
-                </button>
+                <button onClick={() => dispatch(addItem(product))}>Add to Document</button>
               </div>
             </div>
           </Col>
@@ -133,10 +140,44 @@ const Product = () => {
 };
 
 const App = () => {
+  const [productList, setProductList] = useState<ProductInterface[]>([]);
+  const [priceLists, setPriceLists] = useState<PriceList[]>([]);
+
+
+  useEffect(() => {
+    fetchProductList();
+  }, []);
+
+  const fetchProductList = async () => {
+    try {
+      
+      const response = await axios.get<ProductResponse[]>('http://localhost:5091/v1/Product/All');
+      const products = response.data.map((product) => ({
+        ...product,
+        selectedPrice: null,
+      }));
+      setProductList(products);
+      const priceListResponse = await axios.get<PriceList[]>('http://localhost:5091/v1/Pricelist');
+      const priceLists = priceListResponse.data.map((priceList) => ({
+        ...priceList,
+        products: products.filter((product) => product.priceList.some((price) => price.id === priceList.id)),
+      }));
+      setPriceLists(priceLists);
+    } catch (error) {
+      console.log('Error fetching product list:', error);
+    }
+  };
+
   return (
     <div>
-      <Search />
-      <Product />
+      <Search/>
+      <AddUpdatePriceListForm
+        productList={productList}
+        setProductList={setProductList}
+        fetchProductList={fetchProductList}
+        priceLists={priceLists}
+      />
+      <Product productList={productList} setProductList={setProductList} />
     </div>
   );
 };
