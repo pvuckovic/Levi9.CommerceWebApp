@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import '../../assets/style/products.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
-import Search from '../search';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../../store/slices/documentSlice';
-import AddUpdatePriceListForm from './addupdatepricelist';
 
 export interface ProductInterface {
   id: number;
@@ -49,21 +46,23 @@ export interface PriceRequest {
   price: number;
   currency: string;
 }
-
-const Product = ({
-  productList,
-  setProductList
-}: {
-  productList: ProductInterface[];
+interface ProductProps {
+  productList: ProductInterface[],
+  totalPages: number,
+  setCurrentPage: (pageNumber: number) => void;
+  currentPage: number,
   setProductList: React.Dispatch<React.SetStateAction<ProductInterface[]>>;
-}) => {
+}
+const Product: React.FC<ProductProps> = ({ productList, totalPages, setCurrentPage, currentPage, setProductList }) => {
+
   const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
+  const [allProducts, setAllProducts] = useState(productList);
+
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>, productId: number) => {
     const priceId = parseInt(event.target.value);
-    setProductList((prevProductList) =>
+    setAllProducts((prevProductList) =>
       prevProductList.map((product) => {
         if (product.id === productId) {
           const selectedPrice = product.priceList.find((price) => price.id === priceId);
@@ -80,8 +79,8 @@ const Product = ({
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = productList.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(productList.length / productsPerPage);
+  const currentProducts = productList.length > 0 ? productList.slice(indexOfFirstProduct, indexOfLastProduct) : allProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+  totalPages = productList.length > 0 ? Math.ceil(productList.length / productsPerPage) : Math.ceil(allProducts.length / productsPerPage)
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -138,48 +137,4 @@ const Product = ({
     </Container>
   );
 };
-
-const App = () => {
-  const [productList, setProductList] = useState<ProductInterface[]>([]);
-  const [priceLists, setPriceLists] = useState<PriceList[]>([]);
-
-
-  useEffect(() => {
-    fetchProductList();
-  }, []);
-
-  const fetchProductList = async () => {
-    try {
-      
-      const response = await axios.get<ProductResponse[]>('http://localhost:5091/v1/Product/All');
-      const products = response.data.map((product) => ({
-        ...product,
-        selectedPrice: null,
-      }));
-      setProductList(products);
-      const priceListResponse = await axios.get<PriceList[]>('http://localhost:5091/v1/Pricelist');
-      const priceLists = priceListResponse.data.map((priceList) => ({
-        ...priceList,
-        products: products.filter((product) => product.priceList.some((price) => price.id === priceList.id)),
-      }));
-      setPriceLists(priceLists);
-    } catch (error) {
-      console.log('Error fetching product list:', error);
-    }
-  };
-
-  return (
-    <div>
-      <Search/>
-      <AddUpdatePriceListForm
-        productList={productList}
-        setProductList={setProductList}
-        fetchProductList={fetchProductList}
-        priceLists={priceLists}
-      />
-      <Product productList={productList} setProductList={setProductList} />
-    </div>
-  );
-};
-
-export default App;
+export default Product;
