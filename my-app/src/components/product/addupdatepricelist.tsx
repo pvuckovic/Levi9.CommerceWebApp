@@ -123,8 +123,21 @@ const AddUpdatePriceListForm: React.FC<AddUpdatePriceListFormProps> = ({
       });
       setProductList(updatedProductList);
       await fetchProductList();
-    } catch (error) {
-      console.log('Error adding product to price list:', error);
+    } catch (error:any) {
+      if(error.response){
+        const status = error.response.status;
+        const data = error.response.data;
+        const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
+    
+        console.log('Request failed with status:', status);
+        console.log('Error data:', data);
+       
+        window.alert(errorMessage);
+      }else{
+        const errorMessage = `Error executing request: ${error.message}`;
+
+        window.alert(errorMessage);
+      }      
     }
   };
 
