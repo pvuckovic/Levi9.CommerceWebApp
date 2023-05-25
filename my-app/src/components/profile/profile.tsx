@@ -39,7 +39,7 @@ const Profile: React.FC<ClientProfileProps> = ({ clientId }) => {
   useEffect(() => {
     const fetchClientProfile = async () => {
       try {
-        const response = await api.get<Client>(`https://localhost:7281/v1/client/${clientId}`);
+        const response = await api.get<Client>(`http://localhost:5091/v1/client/${clientId}`);
         setClient(response.data);
         console.log(response.data);
         setLoading(false);
