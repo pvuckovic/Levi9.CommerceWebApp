@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import NavigationBar from "./components/navigationBar";
 import AddNewDocumentPage from "./components/document";
@@ -13,16 +13,15 @@ function App() {
   return (
     <div className="App">
       <Router>
-      <Routes>
-        <Route path="/" element={<LoginClient />} />
+        <Routes>
+          <Route path="/" element={<LoginClient />} />
         </Routes>
 
         <Routes>
-        <Route path="/register" element={<RegisterClient />} />
+          <Route path="/register" element={<RegisterClient />} />
         </Routes>
-        <NavigationBar />
+        {(window.location.pathname !== '/' && window.location.pathname !== '/register') && <NavigationBar />}
         <Routes>
-          <Route path="/" element={<ProductPage />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
           <Route path="/documentList" element={<DocumentList />} />
