@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import './login.css';
+import { useNavigate } from 'react-router-dom';
  
 interface AuthenticationRequest {
   Email: string;
@@ -14,6 +15,10 @@ const LoginClient: React.FC = () => {
   });
 
   const [error, setError] = useState<string>('');
+  const [token, setToken] = useState('');
+  const [idClient, setClientId] = useState('');
+  
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -23,14 +28,28 @@ const LoginClient: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://localhost:5091/v1/Authentication/', credentials);
-      const token = response.data;
+      const response = await axios.post('https://localhost:7281/v1/Authentication/', credentials);
+
+      const token = response.data.token; //ove dve linije
+      const idClient = response.data.idClient;
+      
+      setToken(token)
+      setClientId(idClient)
+      
       sessionStorage.setItem('token', token);
-      console.log(token);
+      sessionStorage.setItem('userId', idClient);
+      console.log(response.data.token);
+      console.log(response.data.idClient);
       // Save the token or perform any necessary actions
+
+      navigate('/products');
     } catch (error : any) {
       setError(error.response.data);
     }
+  };
+
+  const handleRegister = () => {
+    navigate('/register');
   };
 
   return (
@@ -59,7 +78,7 @@ const LoginClient: React.FC = () => {
     <button className="login-button" type="submit">Login</button>
   </form>
   {error && <p className="login-error">{error}</p>}
-  <p className="register-link">Don't have an account? </p><a href='https://www.google.com/'>Register</a>
+  <p className="register-link">Don't have an account? <a href=''  onClick={handleRegister}>Register</a></p>
   </div>
 </div>
 
