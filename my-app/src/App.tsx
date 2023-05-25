@@ -20,7 +20,7 @@ function App() {
         <Routes>
           <Route path="/register" element={<RegisterClient />} />
         </Routes>
-        {(window.location.pathname !== '/' && window.location.pathname !== '/register') && <NavigationBar />}
+        {(window.location.pathname !== '/' && window.location.pathname !== '/register')}<NavigationBar />
         <Routes>
           <Route path="/products" element={<ProductPage />} />
           <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
