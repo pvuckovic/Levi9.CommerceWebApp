@@ -29,16 +29,17 @@ interface Client {
 }
 
 interface ClientProfileProps {
-  clientId: number;
+  
 }
 
-const Profile: React.FC<ClientProfileProps> = ({ clientId }) => {
+const Profile: React.FC<ClientProfileProps> = () => {
   const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchClientProfile = async () => {
       try {
+        const clientId = sessionStorage.getItem('userId');
         const response = await api.get<Client>(`http://localhost:5091/v1/client/${clientId}`);
         setClient(response.data);
         console.log(response.data);
@@ -62,7 +63,7 @@ const Profile: React.FC<ClientProfileProps> = ({ clientId }) => {
     };
 
     fetchClientProfile();
-  }, [clientId]);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;

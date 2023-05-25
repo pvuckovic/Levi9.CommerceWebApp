@@ -49,8 +49,6 @@ const LoginClient: React.FC = () => {
 
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('userId', idClient);
-      console.log(response.data.token);
-      console.log(response.data.idClient);
 
       navigate('/products');
     } catch (error: any) {
