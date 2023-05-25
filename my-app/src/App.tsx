@@ -25,7 +25,7 @@ function App() {
           <Route path="/products" element={<ProductPage />} />
           <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
           <Route path="/documentPage" element={<DocumentPage />} />
-          <Route path="/profile" element={<Profile clientId={1} />} />
+          <Route path="/profile" element={<Profile clientId={Number(sessionStorage.getItem('userId'))} />} />
         </Routes>
         <Footer />
       </Router>
