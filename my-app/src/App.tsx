@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginClient />} />
         </Routes>
-
+        
         <Routes>
           <Route path="/register" element={<RegisterClient />} />
         </Routes>
@@ -25,8 +25,9 @@ function App() {
           <Route path="/products" element={<ProductPage />} />
           <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
           <Route path="/documentPage" element={<DocumentPage />} />
-          <Route path="/profile" element={<Profile clientId={Number(sessionStorage.getItem('userId'))} />} />
-        </Routes>
+
+          <Route path="/profile" element={<Profile />} />
+          </Routes>
         <Footer />
       </Router>
     </div>
