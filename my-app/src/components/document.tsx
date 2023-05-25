@@ -1,8 +1,8 @@
 import { ChangeEvent, FC, useState } from "react";
 import styled from "styled-components";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "../store/store";
-import { DocumentState } from "../store/slices/documentSlice";
+import { DocumentState, clearDocument } from "../store/slices/documentSlice";
 import { Col, Row } from "react-bootstrap";
 
 export const Title = styled.text`
@@ -51,6 +51,7 @@ cursor: pointer;
 
 `;
 const AddNewDocumentPage: FC<DocumentState> = () => {
+    const dispatch = useDispatch();
     const selectedItems = useSelector((state: RootState) => state.document.items);
     const { items } = useSelector((state: RootState) => state.document);
     const [documentType, setDocumenType] = useState('INVOICE');
@@ -72,22 +73,23 @@ const AddNewDocumentPage: FC<DocumentState> = () => {
             .then((data) => {
                 console.log(data);
             })
-            .catch((error:any) => {
-                if(error.response){
+            .catch((error: any) => {
+                if (error.response) {
                     const status = error.response.status;
                     const data = error.response.data;
                     const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
-                
+
                     console.log('Request failed with status:', status);
                     console.log('Error data:', data);
-                   
+
                     window.alert(errorMessage);
-                  }else{
+                } else {
                     const errorMessage = `Error executing request: ${error.message}`;
-            
+
                     window.alert(errorMessage);
-                  }   
+                }
             });
+        dispatch(clearDocument());
     };
     return (
         <DocumentContainer>

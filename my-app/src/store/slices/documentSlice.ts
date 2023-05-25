@@ -25,25 +25,33 @@ const documentSlice = createSlice({
     name: 'document',
     initialState,
     reducers: {
+
         addItem: (state, action: PayloadAction<ProductResponse>) => {
             const { id, name, priceList } = action.payload;
             const price = priceList[0];
 
-            const newItem: DocumentItem = {
-                productId: id,
-                name,
-                priceValue: price.priceValue,
-                currency: price.currency,
-                quantity: 1,
-            };
-
-            state.items.push(newItem);
+            const existingItem = state.items.find((item) => item.productId === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                const newItem: DocumentItem = {
+                    productId: id,
+                    name,
+                    priceValue: price.priceValue,
+                    currency: price.currency,
+                    quantity: 1,
+                };
+                state.items.push(newItem);
+            }
         },
         setDocumentType: (state, action: PayloadAction<string>) => {
             state.documentType = action.payload;
         },
+        clearDocument: (state) => {
+            state.items = [];
+        },
     },
 });
 
-export const { addItem, setDocumentType } = documentSlice.actions;
+export const { addItem, setDocumentType, clearDocument } = documentSlice.actions;
 export default documentSlice.reducer;
