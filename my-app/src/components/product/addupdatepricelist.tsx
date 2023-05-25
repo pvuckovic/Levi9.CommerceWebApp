@@ -12,14 +12,14 @@ const StyledContainer = styled(Container)`
 
 const StyledForm = styled(Form)`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  
+  padding: 20px;
   width: 100%;
 `;
 
 const FormGroup = styled(Form.Group)`
-  margin-bottom: 15px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,6 +28,7 @@ const FormGroup = styled(Form.Group)`
 
 const FormControl = styled(Form.Control)`
   box-sizing: border-box;
+  margin-left: 30px;
   width: 100px;
   height: 30px;
   background: #ffffff;
@@ -37,12 +38,13 @@ const FormControl = styled(Form.Control)`
 `;
 
 const StyledButton = styled(Button)`
+  margin-left: 20px;
   box-sizing: border-box;
   width: 80px;
   height: 30px;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
   color: #ffffff;
   background: ${(props) => (props.disabled ? '#dc3545' : '#003df2')};
@@ -73,14 +75,14 @@ const AddUpdatePriceListForm: React.FC<AddUpdatePriceListFormProps> = ({
   const [selectedProductId, setSelectedProductId] = useState<number>(0);
   const [price, setPrice] = useState<number>(0);
   const [currency, setCurrency] = useState<string>('');
-  const [action, setAction] = useState<'action'|'add' | 'update'>('action');
+  const [action, setAction] = useState<'action' | 'add' | 'update'>('action');
 
   const handleAddUpdateProduct = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(event);
-    console.log(selectedPriceListId,selectedProductId,price,currency);
+    console.log(selectedPriceListId, selectedProductId, price, currency);
     if (selectedPriceListId === 0 || selectedProductId === 0 || price === 0 || currency === '') {
-      console.log(selectedPriceListId,selectedProductId,price,currency);
+      console.log(selectedPriceListId, selectedProductId, price, currency);
       return;
     }
     try {
@@ -123,116 +125,116 @@ const AddUpdatePriceListForm: React.FC<AddUpdatePriceListFormProps> = ({
       });
       setProductList(updatedProductList);
       await fetchProductList();
-    } catch (error:any) {
-      if(error.response){
+    } catch (error: any) {
+      if (error.response) {
         const status = error.response.status;
         const data = error.response.data;
         const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
-    
+
         console.log('Request failed with status:', status);
         console.log('Error data:', data);
-       
+
         window.alert(errorMessage);
-      }else{
+      } else {
         const errorMessage = `Error executing request: ${error.message}`;
 
         window.alert(errorMessage);
-      }      
+      }
     }
   };
 
   return (
-    
-    <StyledContainer>    
-        
-    <StyledForm onSubmit={handleAddUpdateProduct}>
-      
-    <Title> Add/Update Price List </Title>
-      <FormGroup controlId="action">
-        <FormControl
-          as="select"
-          value={action}
-          onChange={(event: { target: { value: string; }; }) =>
-            setAction(event.target.value as 'action' | 'add' | 'update')
+
+    <StyledContainer>
+
+      <StyledForm onSubmit={handleAddUpdateProduct}>
+
+        <Title> Choose action </Title>
+        <FormGroup controlId="action">
+          <FormControl
+            as="select"
+            value={action}
+            onChange={(event: { target: { value: string; }; }) =>
+              setAction(event.target.value as 'action' | 'add' | 'update')
+            }
+          >
+            <option value="action">Action</option>
+            <option value="add">Add Price List</option>
+            <option value="update">Update Price List</option>
+          </FormControl>
+        </FormGroup>
+        <FormGroup controlId="priceList">
+          <FormControl
+            as="select"
+            value={selectedPriceListId}
+            onChange={(event: { target: { value: string; }; }) =>
+              setSelectedPriceListId(parseInt(event.target.value))
+            }
+          >
+            <option value={0}>Price List</option>
+            {priceLists.map((priceList) => (
+              <option key={priceList.id} value={priceList.id}>
+                {priceList.name}
+              </option>
+            ))}
+          </FormControl>
+        </FormGroup>
+        <FormGroup controlId="product">
+          <FormControl
+            as="select"
+            value={selectedProductId}
+            onChange={(event: { target: { value: string; }; }) =>
+              setSelectedProductId(parseInt(event.target.value))
+            }
+          >
+            <option value={0}>Product</option>
+            {productList.map((product) => (
+              <option key={product.id} value={product.id}>
+                [{product.id}] {product.name}
+              </option>
+            ))}
+          </FormControl>
+        </FormGroup>
+        <FormGroup controlId="price">
+          <FormControl
+            type="number"
+            value={price}
+            onChange={(event: { target: { value: string; }; }) => setPrice(parseFloat(event.target.value))}
+          />
+        </FormGroup>
+        <FormGroup controlId="currency">
+          <FormControl
+            as="select"
+            value={currency}
+            onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setCurrency(event.target.value)}
+          >
+            <option value={0}>Currency</option>
+            <option value="RSD">RSD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="USD">USD</option>
+            <option value="RMB">RMB</option>
+            <option value="INR">INR</option>
+            <option value="JPY">JPY</option>
+          </FormControl>
+        </FormGroup>
+        <StyledButton
+          type="submit"
+          disabled={
+            action === 'action' ||
+            selectedPriceListId === 0 ||
+            selectedProductId === 0 ||
+            price === 0 ||
+            currency === ''
           }
         >
-          <option value="action">Action</option>
-          <option value="add">Add Price List</option>
-          <option value="update">Update Price List</option>
-        </FormControl>
-      </FormGroup>
-      <FormGroup controlId="priceList">
-        <FormControl
-          as="select"
-          value={selectedPriceListId}
-          onChange={(event: { target: { value: string; }; }) =>
-            setSelectedPriceListId(parseInt(event.target.value))
-          }
-        >
-          <option value={0}>Price List</option>
-          {priceLists.map((priceList) => (
-            <option key={priceList.id} value={priceList.id}>
-              {priceList.name}
-            </option>
-          ))}
-        </FormControl>
-      </FormGroup>
-      <FormGroup controlId="product">
-        <FormControl
-          as="select"
-          value={selectedProductId}
-          onChange={(event: { target: { value: string; }; }) =>
-            setSelectedProductId(parseInt(event.target.value))
-          }
-        >
-          <option value={0}>Product</option>
-          {productList.map((product) => (
-            <option key={product.id} value={product.id}>
-              [{product.id}] {product.name}
-            </option>
-          ))}
-        </FormControl>
-      </FormGroup>
-      <FormGroup controlId="price">
-        <FormControl
-          type="number"
-          value={price}
-          onChange={(event: { target: { value: string; }; }) => setPrice(parseFloat(event.target.value))}
-        />
-      </FormGroup>
-      <FormGroup controlId="currency">
-        <FormControl
-          as="select"
-          value={currency}
-          onChange={(event: { target: { value: React.SetStateAction<string>; }; }) => setCurrency(event.target.value)}
-        >
-          <option value={0}>Currency</option>
-          <option value="RSD">RSD</option>
-          <option value="EUR">EUR</option>
-          <option value="GBP">GBP</option>
-          <option value="USD">USD</option>
-          <option value="RMB">RMB</option>
-          <option value="INR">INR</option>
-          <option value="JPY">JPY</option>
-        </FormControl>
-      </FormGroup>
-      <StyledButton 
-        type="submit"
-        disabled={
-          action === 'action' ||
-          selectedPriceListId === 0 ||
-          selectedProductId === 0 ||
-          price === 0 ||
-          currency === ''
-        }
-      >
-        {action === 'add'
-          ? 'Add'
-          : action === 'update'
-          ? 'Update'
-          : 'Fill All'}
-      </StyledButton >
-    </StyledForm>
+          {action === 'add'
+            ? 'Add'
+            : action === 'update'
+              ? 'Update'
+              : 'Fill All'}
+        </StyledButton >
+      </StyledForm>
     </StyledContainer>
   );
 };

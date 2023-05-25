@@ -6,7 +6,8 @@ const FooterContainer = styled.footer`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #fff;
+  flex-shrink: 0;
 `;
 
 const FooterText = styled.p`
