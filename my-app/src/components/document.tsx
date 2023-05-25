@@ -114,7 +114,7 @@ const AddNewDocumentPage: FC<DocumentState> = () => {
                                 <h4>{item.name}</h4>
                                 <div>
                                     <p>
-                                        {item.priceValue} {item.currency}
+                                        {item.productId}{item.priceValue} {item.currency}
                                     </p>
                                     <p>
                                         Quantity: {item.quantity}
