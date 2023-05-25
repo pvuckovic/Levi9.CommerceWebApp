@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../../assets/style/products.css';
 import { Container, Row, Col, Pagination } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
@@ -48,17 +48,14 @@ export interface PriceRequest {
 }
 interface ProductProps {
   productList: ProductInterface[],
-  totalPages: number,
-  setCurrentPage: (pageNumber: number) => void;
-  currentPage: number,
   setProductList: React.Dispatch<React.SetStateAction<ProductInterface[]>>;
 }
-const Product: React.FC<ProductProps> = ({ productList, totalPages, setCurrentPage, currentPage, setProductList }) => {
+const Product: React.FC<ProductProps> = ({ productList, setProductList }) => {
 
   const dispatch = useDispatch();
   const productsPerPage = 10;
   const [allProducts, setAllProducts] = useState(productList);
-
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLSelectElement>, productId: number) => {
     const priceId = parseInt(event.target.value);
@@ -80,7 +77,7 @@ const Product: React.FC<ProductProps> = ({ productList, totalPages, setCurrentPa
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = productList.length > 0 ? productList.slice(indexOfFirstProduct, indexOfLastProduct) : allProducts.slice(indexOfFirstProduct, indexOfLastProduct)
-  totalPages = productList.length > 0 ? Math.ceil(productList.length / productsPerPage) : Math.ceil(allProducts.length / productsPerPage)
+  const totalPagesProduct = productList.length > 0 ? Math.ceil(productList.length / productsPerPage) : Math.ceil(allProducts.length / productsPerPage)
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -89,10 +86,10 @@ const Product: React.FC<ProductProps> = ({ productList, totalPages, setCurrentPa
   return (
     <Container>
       <Row>
-        {totalPages > 1 && (
+        {totalPagesProduct > 1 && (
           <div className="pagination-container">
             <Pagination>
-              {Array.from({ length: totalPages }, (_, index) => (
+              {Array.from({ length: totalPagesProduct }, (_, index) => (
                 <Pagination.Item
                   key={index + 1}
                   active={index + 1 === currentPage}

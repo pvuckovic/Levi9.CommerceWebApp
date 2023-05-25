@@ -48,8 +48,21 @@ const RegisterClient: React.FC = () => {
         }));
         setPriceLists(priceLists);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error:any) {
+      if(error.response){
+        const status = error.response.status;
+        const data = error.response.data;
+        const errorMessage = `Request failed with status: ${status}\nError data: ${JSON.stringify(data)}`;
+    
+        console.log('Request failed with status:', status);
+        console.log('Error data:', data);
+       
+        window.alert(errorMessage);
+      }else{
+        const errorMessage = `Error executing request: ${error.message}`;
+
+        window.alert(errorMessage);
+      }      
     }
   };
 
@@ -73,6 +86,7 @@ const RegisterClient: React.FC = () => {
       
     } catch (error: any) {
       setMessage(error.response.data);
+
     }
   };
 
