@@ -25,7 +25,6 @@ function App() {
           <Route path="/products" element={<ProductPage />} />
           <Route path="/documents" element={<AddNewDocumentPage documentType={""} clientId={0} items={[]} />} />
           <Route path="/documentPage" element={<DocumentPage />} />
-
           <Route path="/profile" element={<Profile />} />
           </Routes>
         <Footer />
