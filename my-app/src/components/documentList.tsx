@@ -134,7 +134,7 @@ export interface DocumentProps {
             {currentDocuments.map((document) => (
                 <div>
             <DividerContainer>
-            <DocumentId>{document.clientId}</DocumentId>
+            <DocumentId>{document.id}</DocumentId>
             <DocumentType>{document.documentType}</DocumentType>
           </DividerContainer>
           <Divider />

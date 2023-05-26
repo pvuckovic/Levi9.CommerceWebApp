@@ -128,7 +128,7 @@ interface SearchProps {
 const DocSearch: React.FC<SearchProps> = ({ setDocumentList, fetchDocumentList, documentList, allDocumentsSearch }) => {
     const location = useLocation();
     const [value, setValue] = useState("");
-    const [selectedOption, setSelectedOption] = useState("name");
+    const [selectedOption, setSelectedOption] = useState("id");
     const [direction, setDirection] = useState<'asc' | 'dsc'>('asc');
     const [currentPage, setCurrentPage] = useState(1);
     const handlePageClick = (pageNumber: number) => {        
@@ -215,10 +215,10 @@ const DocSearch: React.FC<SearchProps> = ({ setDocumentList, fetchDocumentList, 
                     placeholder="Search by name"
                 />
                 <OrderByDropdown value={selectedOption} onChange={handleSelect}>
-                    <option value="name">Name</option>
+                    {/* <option value="name">Name</option> */}
                     <option value="id">id</option>
                     <option value="globalId">Global id</option>
-                    <option value="availableQuantity">Available quantity</option>
+                    <option value="availableQuantity">Document type</option>
                 </OrderByDropdown>
                 <DirectionButtonAsc onClick={handleSearchAsc}> <DirectionAsc /> </DirectionButtonAsc>
                 <DirectionButtonDesc onClick={handleSearchDesc}> <DirectionDesc /></DirectionButtonDesc>

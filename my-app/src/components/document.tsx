@@ -4,6 +4,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from "../store/store";
 import { DocumentState, clearDocument } from "../store/slices/documentSlice";
 import { Col, Row } from "react-bootstrap";
+import axios from "axios";
+
+
+const api = axios.create();
+
+// Add the interceptor
+api.interceptors.request.use(
+  (config) => {
+    // Get stored token from localStorage
+    const token = sessionStorage.getItem('token');
+    
+    // Add token to the header
+    config.headers.Authorization = `Bearer ${token}`;
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const Title = styled.text`
 margin-left:20px;
@@ -58,7 +78,8 @@ const AddNewDocumentPage: FC<DocumentState> = () => {
     const handleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
         setDocumenType(event.target.value);
     };
-    const requestBody = { documentType, clientId: 1, items }
+    const clientId = sessionStorage.getItem('userId');
+    const requestBody = { documentType, clientId, items }
     const handleAddDocument = () => {
         debugger;
         const apiUrl = `http://localhost:5091/v1/Document`;
