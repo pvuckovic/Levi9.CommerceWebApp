@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from "styled-components";
-
-const api = axios.create();
-
-// Add the interceptor
-api.interceptors.request.use(
-  (config) => {
-    // Get stored token from localStorage
-    const token = sessionStorage.getItem('token');
-    
-    // Add token to the header
-    config.headers.Authorization = `Bearer ${token}`;
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+import { useDispatch } from 'react-redux';
+import { Col, Container, Pagination, Row } from 'react-bootstrap';
 
 export const DocumentContainer = styled.div`
+`;
+
+const PaginationContainer = styled.div`
+margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+`;
+
+const PageNumber = styled.button<{ active: boolean }>`
+  height: 100%;
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: ${({ active }) => (active ? "#003DF2" : "#FFFFFF")};
+  color: ${({ active }) => (active ? "#FFFFFF" : "#003DF2")};
+  border-radius: 20px;
+  cursor: pointer;
 `;
 
 export const DocumentInfo = styled.div`
@@ -79,8 +80,8 @@ export const Title = styled.h1`
   }
 `;
 
-interface Document {
-  documentId: number;
+export interface DocumentInterface {
+  id: number;
   globalId: string;
   lastUpdate: string;
   clientId: number;
@@ -88,7 +89,16 @@ interface Document {
   items: DocumentItem[];
 }
 
-interface DocumentItem {
+export interface DocumentResponse {
+    id: number;
+    globalId: string;
+    lastUpdate: string;
+    clientId: number;
+    documentType: string;
+    items: DocumentItem[];
+  }
+
+export interface DocumentItem {
   productId: number;
   name: string;
   priceValue: number;
@@ -96,63 +106,73 @@ interface DocumentItem {
   quantity: number;
 }
 
-const Document = ({ document }: { document: Document }) => (
-  <div key={document.documentId}>
-    <DividerContainer>
-      <DocumentId>{document.documentId}</DocumentId>
-      <DocumentType>{document.documentType}</DocumentType>
-    </DividerContainer>
-    <Divider />
-    <div className="product-container">
-      {document.items.map((item) => (
-        <div key={item.productId} className="product-item">
-          <h4>{item.name}</h4>
-          <div>
-            <p>
-              {item.priceValue} {item.currency}
-            </p>
-            <p>
-              Quantity: {item.quantity}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const DocumentList = () => {
-  const [documents, setDocuments] = useState<Document[]>([]);
-
-  useEffect(() => {
-    getAllDocuments();
-  }, []);
-
-  const getAllDocuments = async () => {
-    try {
-      const response = await api.get<Document[]>('https://localhost:7281/v1/Document/All');
-      if (response.status === 200) {
-        setDocuments(response.data);
-      } else {
-        console.error('Error retrieving documents:', response.status);
-      }
-    } catch (error) {
-      console.error('Error retrieving documents:', error);
-    }
-  };
-
-  if (documents.length === 0) {
-    return <p>No documents found.</p>;
+export interface DocumentProps {
+    documentList: DocumentInterface[],
+    setDocumentList: React.Dispatch<React.SetStateAction<DocumentInterface[]>>;
   }
 
-  return (
-    <div>
-      <Title>Documents</Title>
-      {documents.map((document) => (
-        <Document document={document} />
-      ))}
-    </div>
-  );
-};
+  const DocumentComp: React.FC<DocumentProps> = ({ documentList,  setDocumentList }) => {
 
-export default DocumentList;
+    const dispatch = useDispatch();
+    const documentsPerPage = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+    const [allDocuments, setAllDocuments] = useState(documentList);
+  
+  
+    const indexOfLastDocument = currentPage * documentsPerPage;
+    const indexOfFirstDocument = indexOfLastDocument - documentsPerPage;
+    const currentDocuments = documentList.length > 0 ? documentList.slice(indexOfFirstDocument, indexOfLastDocument) : allDocuments.slice(indexOfFirstDocument, indexOfLastDocument)
+    const totalPages = documentList.length > 0 ? Math.ceil(documentList.length / documentsPerPage) : Math.ceil(allDocuments.length / documentsPerPage)
+  
+    const paginate = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+      };
+
+      return (
+        <Container>
+          <Row>
+            {currentDocuments.map((document) => (
+                <div>
+            <DividerContainer>
+            <DocumentId>{document.id}</DocumentId>
+            <DocumentType>{document.documentType}</DocumentType>
+          </DividerContainer>
+          <Divider />
+            <div className="product-container">
+            {document.items.map((item) => (
+              <div key={item.productId} className="product-item">
+                <h4>{item.name}</h4>
+                <div>
+                  <p>
+                    {item.priceValue} {item.currency}
+                  </p>
+                  <p>
+                    Quantity: {item.quantity}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          </div>
+              
+            ))}
+          </Row>
+          <Row>
+        {totalPages > 1 && (
+          <PaginationContainer>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <PageNumber
+                key={index + 1}
+                active={index + 1 === currentPage}
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </PageNumber>
+            ))}
+          </PaginationContainer>
+        )}
+      </Row>
+        </Container>
+      );
+    };
+    export default DocumentComp;

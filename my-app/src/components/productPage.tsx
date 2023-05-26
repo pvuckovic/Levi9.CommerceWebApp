@@ -4,6 +4,25 @@ import Product, { PriceList, ProductInterface, ProductResponse } from './product
 import axios from 'axios';
 import AddUpdatePriceListForm from './product/addupdatepricelist';
 
+const api = axios.create();
+
+// Add the interceptor
+api.interceptors.request.use(
+  (config) => {
+    // Get stored token from localStorage
+    const token = sessionStorage.getItem('token');
+    
+    // Add token to the header
+    config.headers.Authorization = `Bearer ${token}`;
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
 const ProductPage = () => {
     const [productList, setProductList] = useState<ProductInterface[]>([]);
     const [priceLists, setPriceLists] = useState<PriceList[]>([]);    
@@ -15,14 +34,14 @@ const ProductPage = () => {
     const fetchProductList = async () => {
         try {
 
-            const response = await axios.get<ProductResponse[]>('http://localhost:5091/v1/Product/All');
+            const response = await api.get<ProductResponse[]>('http://localhost:5091/v1/Product/All');
             const products = response.data.map((product) => ({
                 ...product,
                 selectedPrice: null,
             }));
             setProductList(products);
             setAllProductsSearch(products);
-            const priceListResponse = await axios.get<PriceList[]>('http://localhost:5091/v1/Pricelist');
+            const priceListResponse = await api.get<PriceList[]>('http://localhost:5091/v1/Pricelist');
             const priceLists = priceListResponse.data.map((priceList) => ({
                 ...priceList,
                 products: products.filter((product) => product.priceList.some((price) => price.id === priceList.id)),

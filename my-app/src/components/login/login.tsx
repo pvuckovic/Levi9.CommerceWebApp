@@ -41,7 +41,7 @@ const LoginClient: React.FC = () => {
     try {
       const response = await axios.post('https://localhost:7281/v1/Authentication/', credentials);
 
-      const token = response.data.token; //ove dve linije
+      const token = response.data.token;
       const idClient = response.data.idClient;
 
       setToken(token)
@@ -49,8 +49,6 @@ const LoginClient: React.FC = () => {
 
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('userId', idClient);
-      console.log(response.data.token);
-      console.log(response.data.idClient);
 
       navigate('/products');
     } catch (error: any) {
